@@ -1,11 +1,11 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
+import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import SocialProof from './components/SocialProof'
 import FormularioCalculadora from './components/FormularioCalculadora'
-import Portfolio from './components/Portfolio'
+import Products from './components/Products'
 import Testimonios from './components/Testimonios'
-import Filosofia from './components/Filosofia'
-import Numeros from './components/Numeros'
-import Contacto from './components/Contacto'
+import FinalCTA from './components/FinalCTA'
 import Footer from './components/Footer'
 import { trackScrollDepth, trackCalendlyOpened } from './utils/tracking'
 import { Analytics } from '@vercel/analytics/react'
@@ -14,7 +14,6 @@ const Calendly = lazy(() => import('./components/Calendly'))
 
 function App() {
   const [showCalendly, setShowCalendly] = useState(false)
-  const [showStickyCTA, setShowStickyCTA] = useState(false)
   const [scrollDepthTracked, setScrollDepthTracked] = useState({
     '25': false,
     '50': false,
@@ -40,7 +39,7 @@ function App() {
 
     const sections = document.querySelectorAll('section, article')
     sections.forEach((section) => {
-      section.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out')
+      section.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-1000', 'ease-out')
       observer.observe(section)
     })
 
@@ -50,14 +49,13 @@ function App() {
   }, [])
 
   useEffect(() => {
-    // Scroll tracking para depth y sticky CTA mobile
+    // Scroll tracking
     const handleScroll = () => {
       const windowHeight = window.innerHeight
       const documentHeight = document.documentElement.scrollHeight
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
       const scrollPercentage = (scrollTop / (documentHeight - windowHeight)) * 100
 
-      // Track scroll depth
       const depths = ['25', '50', '75', '100']
       depths.forEach((depth) => {
         if (scrollPercentage >= parseInt(depth) && !scrollDepthTracked[depth]) {
@@ -68,64 +66,47 @@ function App() {
           }))
         }
       })
-
-      // Show sticky CTA mobile cuando scroll > 100vh
-      if (window.innerWidth < 768) {
-        setShowStickyCTA(scrollTop > windowHeight)
-      } else {
-        setShowStickyCTA(false)
-      }
     }
 
     window.addEventListener('scroll', handleScroll)
-    handleScroll() // Check initial position
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [scrollDepthTracked])
 
   const handleOpenCalendly = () => {
     setShowCalendly(true)
-    trackCalendlyOpened('cta')
+    trackCalendlyOpened('cta_global')
   }
 
   const handleCloseCalendly = () => {
     setShowCalendly(false)
   }
 
-  const scrollToFormulario = () => {
-    document.getElementById('formulario')?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
-    <main className="min-h-screen bg-negro-absoluto">
-      <Hero onOpenCalendly={handleOpenCalendly} />
-      <FormularioCalculadora onOpenCalendly={handleOpenCalendly} />
-      <Portfolio onOpenCalendly={handleOpenCalendly} />
-      <Testimonios />
-      <Filosofia />
-      <Numeros />
-      <Contacto />
-      <Footer />
+    <main className="min-h-screen bg-[#0A0A0A] font-sans selection:bg-[#D4AF37] selection:text-black">
+      <Navbar onOpenCalendly={handleOpenCalendly} />
 
-      {/* CTA Sticky Mobile */}
-      {showStickyCTA && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-oro-ejecutivo p-4 z-40 shadow-lg">
-          <button
-            onClick={scrollToFormulario}
-            className="w-full bg-negro-absoluto text-oro-ejecutivo py-3 font-heading font-bold text-sm rounded-sm transition-all duration-200 ease-out hover:bg-zinc-oscuro"
-          >
-            Calcular Mi Hemorragia € Ahora
-          </button>
-        </div>
-      )}
+      <Hero onOpenCalendly={handleOpenCalendly} />
+
+      <SocialProof />
+
+      <FormularioCalculadora onOpenCalendly={handleOpenCalendly} />
+
+      <Products onOpenCalendly={handleOpenCalendly} />
+
+      <Testimonios />
+
+      <FinalCTA onOpenCalendly={handleOpenCalendly} />
+
+      <Footer />
 
       {/* Calendly Modal */}
       {showCalendly && (
         <Suspense fallback={
-          <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
-            <div className="text-white text-lg">Cargando calendario...</div>
+          <div className="fixed inset-0 bg-[#0A0A0A] bg-opacity-95 z-[60] flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+              <div className="text-[#E5E4E2] font-bold tracking-widest uppercase text-sm">Cargando agenda...</div>
+            </div>
           </div>
         }>
           <Calendly onClose={handleCloseCalendly} />

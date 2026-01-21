@@ -14,7 +14,6 @@ const FormularioCalculadora = ({ onOpenCalendly }) => {
   const [formStarted, setFormStarted] = useState(false)
 
   useEffect(() => {
-    // Track cuando se inicia el formulario (usuario hace scroll hasta él)
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !formStarted) {
@@ -24,7 +23,7 @@ const FormularioCalculadora = ({ onOpenCalendly }) => {
       })
     }, { threshold: 0.5 })
 
-    const element = document.getElementById('formulario')
+    const element = document.getElementById('calculadora')
     if (element) {
       observer.observe(element)
     }
@@ -51,8 +50,8 @@ const FormularioCalculadora = ({ onOpenCalendly }) => {
     }
     setFormData(newData)
     trackFormFieldComplete(field)
-    
-    // Calcular en vivo cuando todos los campos están llenos
+
+    // Calcular en vivo cuando los campos numéricos básicos están llenos
     const ticket = parseFloat(newData.ticketMedio)
     const propuestas = parseFloat(newData.propuestasMes)
     const conversion = parseFloat(newData.conversionActual)
@@ -66,154 +65,165 @@ const FormularioCalculadora = ({ onOpenCalendly }) => {
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (hemorragia) {
-      trackFormSubmit({
-        hemorragia_mensual: hemorragia.mensual,
-        hemorragia_anual: hemorragia.anual,
-        ...formData
-      })
-      
-      // Guardar en localStorage
-      localStorage.setItem('calculadoraData', JSON.stringify({
-        ...formData,
-        hemorragia
-      }))
-      
-      // Abrir Calendly
-      trackCalendlyOpened('form_calculadora')
-      onOpenCalendly()
-    }
-  }
-
   return (
-    <section id="formulario" className="bg-zinc-oscuro py-12 md:py-20 px-4 md:px-8">
-      <div className="max-w-2xl mx-auto">
-        <h2 className="font-heading font-bold text-blanco-puro text-3xl text-center mb-4">
-          ¿Cuánto dinero estás perdiendo exactamente?
-        </h2>
-        <p className="text-platino-dark text-center mb-12">
-          Responde 4 preguntas. Te calculamos tu hemorragia económica en vivo.
-        </p>
+    <section id="calculadora" className="relative py-24 px-6 bg-[#0A0A0A] overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#D4AF37]/5 to-transparent pointer-events-none"></div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Campo 1: ¿Qué vendes? */}
-          <div>
-            <label className="block text-blanco-puro text-sm mb-2">¿Qué vendes?</label>
-            <select
-              value={formData.tipoVenta}
-              onChange={(e) => handleChange('tipoVenta', e.target.value)}
-              className="w-full bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-              required
-            >
-              <option value="">Selecciona una opción</option>
-              <option value="servicios-b2b">Servicios B2B (consultoría, agencia)</option>
-              <option value="saas">SaaS / Software</option>
-              <option value="productos-high-ticket">Productos high-ticket</option>
-            </select>
+      <div className="max-w-7xl mx-auto relative z-10">
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 mb-4">
+            <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse"></span>
+            <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+              Calculadora hemorragia económica
+            </span>
           </div>
 
-          {/* Campo 2: Ticket medio */}
-          <div>
-            <label className="block text-blanco-puro text-sm mb-2">Ticket medio por proyecto/cliente</label>
-            <div className="flex items-center gap-2">
+          <h2 className="font-black text-4xl md:text-6xl text-white mb-6">
+            ¿Cuánto dinero estás perdiendo?
+          </h2>
+          <p className="text-xl text-[#E5E4E2] max-w-2xl mx-auto">
+            Responde 4 preguntas. Te mostramos tu hemorragia económica en tiempo real.
+          </p>
+        </div>
+
+        {/* Calculator card */}
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+
+          <div className="bg-[#1A1A1A] rounded-3xl p-8 border border-[#3A3A3A] shadow-2xl">
+
+            {/* Campo 1 */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-[#8C8C8C] uppercase tracking-widest mb-4">
+                ¿Qué vendes?
+              </label>
+              <select
+                className="w-full bg-[#0A0A0A] border border-[#3A3A3A] text-white px-6 py-4 rounded-xl focus:border-[#D4AF37] outline-none appearance-none cursor-pointer"
+                value={formData.tipoVenta}
+                onChange={(e) => handleChange('tipoVenta', e.target.value)}
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="servicios-b2b">Servicios B2B (consultoría, agencia)</option>
+                <option value="saas">SaaS / Software</option>
+                <option value="productos-high-ticket">Productos high-ticket (+1000€)</option>
+              </select>
+            </div>
+
+            {/* Campo 2 */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-[#8C8C8C] uppercase tracking-widest mb-4">
+                Ticket medio por proyecto
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  className="w-full bg-[#0A0A0A] border border-[#3A3A3A] text-white px-6 py-4 rounded-xl focus:border-[#D4AF37] outline-none"
+                  placeholder="5000"
+                  value={formData.ticketMedio}
+                  onChange={(e) => handleChange('ticketMedio', e.target.value)}
+                />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[#8C8C8C] font-bold">€</span>
+              </div>
+              <p className="text-xs text-[#555] mt-2">Valor promedio de cada deal</p>
+            </div>
+
+            {/* Campo 3 */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-[#8C8C8C] uppercase tracking-widest mb-4">
+                Propuestas que envías al mes
+              </label>
               <input
                 type="number"
-                value={formData.ticketMedio}
-                onChange={(e) => handleChange('ticketMedio', e.target.value)}
-                placeholder="15000"
-                className="flex-1 bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-                required
+                className="w-full bg-[#0A0A0A] border border-[#3A3A3A] text-white px-6 py-4 rounded-xl focus:border-[#D4AF37] outline-none"
+                placeholder="10"
+                value={formData.propuestasMes}
+                onChange={(e) => handleChange('propuestasMes', e.target.value)}
               />
-              <span className="text-platino-dark text-sm whitespace-nowrap">€ (promedio)</span>
             </div>
-          </div>
 
-          {/* Campo 3: Propuestas/mes */}
-          <div>
-            <label className="block text-blanco-puro text-sm mb-2">¿Cuántas propuestas envías al mes?</label>
-            <input
-              type="number"
-              value={formData.propuestasMes}
-              onChange={(e) => handleChange('propuestasMes', e.target.value)}
-              placeholder="10"
-              className="w-full bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-              required
-            />
-          </div>
-
-          {/* Campo 4: Conversión actual */}
-          <div>
-            <label className="block text-blanco-puro text-sm mb-2">Tasa conversión actual</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                value={formData.conversionActual}
-                onChange={(e) => handleChange('conversionActual', e.target.value)}
-                placeholder="30"
-                min="0"
-                max="100"
-                className="flex-1 bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-                required
-              />
-              <span className="text-platino-dark text-sm whitespace-nowrap">% (ej: 30 = 3 de cada 10)</span>
-            </div>
-          </div>
-
-          {/* Resultado cálculo */}
-          {hemorragia && hemorragia.mensual > 0 && (
-            <div className="bg-red-600 border-2 border-red-400 p-6 rounded-sm">
-              <p className="text-white text-lg mb-2">Tu hemorragia económica mensual:</p>
-              <p className="font-mono text-oro-ejecutivo text-5xl font-bold mb-2">
-                {hemorragia.mensual.toLocaleString('es-ES')}€
-              </p>
-              <p className="text-white text-2xl mb-4">
-                Al año: {hemorragia.anual.toLocaleString('es-ES')}€
-              </p>
-              <p className="text-white text-sm opacity-90">
-                Basado en mejorar tu tasa de cierre del {formData.conversionActual}% al 60% con Closer Proposals.
-              </p>
-            </div>
-          )}
-
-          {/* Campos captura lead (solo mostrar si hay resultado) */}
-          {hemorragia && hemorragia.mensual > 0 && (
-            <>
-              <div>
-                <label className="block text-blanco-puro text-sm mb-2">Email *</label>
+            {/* Campo 4 */}
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-[#8C8C8C] uppercase tracking-widest mb-4">
+                Tasa de conversión actual
+              </label>
+              <div className="relative">
                 <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  required
-                  className="w-full bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-                  placeholder="tu@email.com"
+                  type="number"
+                  className="w-full bg-[#0A0A0A] border border-[#3A3A3A] text-white px-6 py-4 rounded-xl focus:border-[#D4AF37] outline-none"
+                  placeholder="30"
+                  value={formData.conversionActual}
+                  onChange={(e) => handleChange('conversionActual', e.target.value)}
                 />
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[#8C8C8C] font-bold">%</span>
               </div>
-              <div>
-                <label className="block text-blanco-puro text-sm mb-2">LinkedIn URL (opcional)</label>
-                <input
-                  type="url"
-                  value={formData.linkedin}
-                  onChange={(e) => handleChange('linkedin', e.target.value)}
-                  className="w-full bg-negro-absoluto border border-platino-dark text-blanco-puro px-4 py-3 focus:border-oro-ejecutivo focus:outline-none rounded-sm"
-                  placeholder="https://linkedin.com/in/tu-perfil"
-                />
-              </div>
-            </>
-          )}
+              <p className="text-xs text-[#555] mt-2">Ejemplo: 30% = 3 de cada 10 propuestas cierran</p>
+            </div>
 
-          {/* CTA post-cálculo */}
-          {hemorragia && hemorragia.mensual > 0 && (
-            <button
-              type="submit"
-              className="w-full bg-oro-ejecutivo text-negro-absoluto py-4 font-heading font-bold text-lg rounded-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              Agendar Auditoría Ahora → Cerrar Esta Hemorragia
-            </button>
-          )}
-        </form>
+          </div>
+
+          {/* Resultado (mostrar cuando se calcula) */}
+          <div className={`relative transition-all duration-700 ${hemorragia ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
+            {hemorragia && (
+              <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-3xl p-10 border-2 border-red-500/50 shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+
+                {/* Animated background */}
+                <div className="absolute inset-0 bg-red-500/5 opacity-10 animate-pulse rounded-3xl"></div>
+
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-red-500 uppercase tracking-widest mb-6">
+                    Tu hemorragia económica mensual:
+                  </h3>
+
+                  <div className="flex items-baseline gap-4 mb-2">
+                    <span className="font-black text-6xl md:text-8xl text-white tracking-tighter">
+                      {hemorragia.mensual.toLocaleString('es-ES')}
+                    </span>
+                    <span className="text-3xl font-black text-[#D4AF37]">€</span>
+                    <span className="text-xl text-[#8C8C8C]">/mes</span>
+                  </div>
+
+                  <div className="bg-red-500/20 text-red-200 px-4 py-2 rounded-lg inline-block font-bold text-lg mb-8">
+                    Al año: {hemorragia.anual.toLocaleString('es-ES')}€
+                  </div>
+
+                  <div className="space-y-6 mb-10">
+                    <p className="text-xl text-[#E5E4E2] leading-relaxed">
+                      Estás cerrando solo {Math.round(formData.propuestasMes * (formData.conversionActual / 100))} de cada {formData.propuestasMes} propuestas.
+                      Con <span className="text-[#D4AF37] font-bold">Closer Proposals</span>, empresas de tu perfil cierran {Math.round(formData.propuestasMes * 0.6)}.
+                    </p>
+                    <div className="h-px bg-[#3A3A3A] w-full"></div>
+                    <p className="text-lg text-red-400 font-medium">
+                      Son {Math.round(formData.propuestasMes * 0.6) - Math.round(formData.propuestasMes * (formData.conversionActual / 100))} proyectos más al mes × {formData.ticketMedio}€ = {hemorragia.mensual.toLocaleString('es-ES')}€/mes que se te escapan ahora mismo.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={onOpenCalendly}
+                    className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-6 rounded-2xl font-black text-xl hover:scale-[1.02] transition-all hover:shadow-[0_0_30px_rgba(239,68,68,0.4)]"
+                  >
+                    Agendar Auditoría Ahora → Cerrar Esta Hemorragia
+                  </button>
+                </div>
+              </div>
+            )}
+            {!hemorragia && (
+              <div className="h-full flex items-center justify-center p-12 border-2 border-dashed border-[#3A3A3A] rounded-3xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-[#1A1A1A] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-[#8C8C8C] font-medium">Completa los datos para ver tu resultado en vivo</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+
       </div>
     </section>
   )

@@ -7,21 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        'negro-absoluto': '#000000',
-        'oro-ejecutivo': '#D4AF37',
-        'blanco-puro': '#FFFFFF',
-        'platino-dark': '#8C8C8C',
-        'zinc-oscuro': '#09090b',
-        'rojo-borde': '#DC2626',
+        oro: {
+          DEFAULT: '#D4AF37',
+          glow: '#F4D03F',
+        },
+        charcoal: '#1A1A1A',
+        slate: '#2A2A2A',
+        zinc: {
+          dark: '#3A3A3A',
+        },
       },
       fontFamily: {
-        'display': ['Playfair Display', 'serif'],
-        'heading': ['Inter', 'sans-serif'],
-        'body': ['Inter', 'sans-serif'],
-        'mono': ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
-      fontWeight: {
-        'display': '900',
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
