@@ -9,10 +9,12 @@ const Footer = () => {
 
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#D4AF37] to-[#F4D03F] rounded-lg flex items-center justify-center">
-                <span className="text-black font-black text-xl">DV</span>
-              </div>
+            <div className="flex items-center gap-3 mb-6">
+              <img
+                src="/logo.png"
+                alt="Durá Ventures Logo"
+                className="w-10 h-10 object-contain rounded-lg shadow-lg shadow-gold/20"
+              />
               <span className="font-black text-white text-xl tracking-tight">
                 DURÁ VENTURES
               </span>
