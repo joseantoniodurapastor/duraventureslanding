@@ -1,4 +1,6 @@
-const Portfolio = () => {
+import { trackProductCTAClick } from '../utils/tracking'
+
+const Portfolio = ({ onOpenCalendly }) => {
   return (
     <section id="portfolio" className="px-4 md:px-8 lg:px-16 py-16 md:py-24 max-w-7xl mx-auto">
       <h2 className="font-heading font-bold text-blanco-puro text-[29px] md:text-[36px] mb-12 md:mb-16 text-center md:text-left">
@@ -36,22 +38,33 @@ const Portfolio = () => {
           </p>
 
           {/* Métrica destacada */}
-          <div className="mb-8">
+          <div className="mb-6">
             <p className="font-mono text-oro-ejecutivo text-[18px] font-normal">
               1.997€ pago único | Acceso vitalicio
             </p>
           </div>
 
+          {/* Métricas destacadas adicionales */}
+          <div className="mb-8 space-y-2">
+            <p className="font-mono text-oro-ejecutivo text-sm font-normal">
+              Tasa cierre: 30% → 60%
+            </p>
+            <p className="font-mono text-oro-ejecutivo text-sm font-normal">
+              ROI promedio: 14 días
+            </p>
+          </div>
+
           {/* CTA */}
-          <a
-            href="https://closerproposals.es"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => {
+              trackProductCTAClick('Closer Proposals')
+              onOpenCalendly()
+            }}
             className="inline-flex items-center font-heading font-semibold text-oro-ejecutivo hover:text-oro-ejecutivo/80 transition-colors duration-200 text-base md:text-lg group"
           >
-            Ver Closer Proposals
+            Genera Propuesta Demo Ahora → +1.000€/mes
             <span className="ml-2 group-hover:translate-x-1 transition-transform duration-200">→</span>
-          </a>
+          </button>
         </article>
 
         {/* Card IA Feroz */}
@@ -82,22 +95,33 @@ const Portfolio = () => {
           </p>
 
           {/* Métrica destacada */}
-          <div className="mb-8">
+          <div className="mb-6">
             <p className="font-mono text-oro-ejecutivo text-[18px] font-normal">
               600€ base | Entrega 7 días
             </p>
           </div>
 
+          {/* Métricas destacadas adicionales */}
+          <div className="mb-8 space-y-2">
+            <p className="font-mono text-oro-ejecutivo text-sm font-normal">
+              Ahorro promedio: 4.980€/mes
+            </p>
+            <p className="font-mono text-oro-ejecutivo text-sm font-normal">
+              Implementación: 7 días garantizados
+            </p>
+          </div>
+
           {/* CTA */}
-          <a
-            href="https://iaferoz.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => {
+              trackProductCTAClick('IA Feroz')
+              onOpenCalendly()
+            }}
             className="inline-flex items-center font-heading font-semibold text-oro-ejecutivo hover:text-oro-ejecutivo/80 transition-colors duration-200 text-base md:text-lg group"
           >
-            Ver IA Feroz
+            Auditoría Procesos 20 Min → Ahorra 4.980€/mes
             <span className="ml-2 group-hover:translate-x-1 transition-transform duration-200">→</span>
-          </a>
+          </button>
         </article>
       </div>
     </section>
